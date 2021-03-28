@@ -13,10 +13,10 @@ namespace detail {
 // Utility function for runtime-conditional locking of member function calls.
 // Expects TLock to be an RAII lock type which takes a TMutex reference in its constructor.
 template<typename TLock,
-		 auto Function,
-		 typename TMutex,
-		 typename TInst,
-		 typename... TArgs>
+         auto Function,
+         typename TMutex,
+         typename TInst,
+         typename... TArgs>
 constexpr detail::MemberCallReturnType<Function, TInst, TArgs...>
 ConditionalLockMemberCall(bool conditional, TMutex &mutex, TInst *instance, TArgs&&... args) {
 	if (conditional) {
