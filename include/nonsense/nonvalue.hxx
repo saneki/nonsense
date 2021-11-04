@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <stdexcept>
+#include <type_traits>
 
 namespace nonsense {
 	template <typename T, T Exempt>
@@ -52,4 +53,7 @@ namespace nonsense {
 
 	template <typename T>
 	using NonLowest = NonValue<T, std::numeric_limits<T>::lowest()>;
+
+	template <typename T, std::enable_if_t<std::is_pointer_v<T>, bool> = true>
+	using NonNull = NonValue<T, nullptr>;
 } // namespace nonsense
