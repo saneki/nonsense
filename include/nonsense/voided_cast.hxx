@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <nonsense/type_traits.hxx>
 
 namespace nonsense {
 
@@ -12,12 +13,7 @@ template <typename TDest, typename TSrc,
 		  std::enable_if_t<std::is_pointer_v<TSrc>, bool> = true
 >
 constexpr TDest voided_cast(TSrc src) noexcept {
-	// NOTE: This assumes a pointer depth of no more than 1.
-	using TVoid =
-		std::conditional_t<std::is_const_v<std::remove_pointer_t<TSrc>>,
-			const void *,
-			void *
-		>;
+	using TVoid = apply_pointer_cv_t<void *, TSrc>;
 	return static_cast<TDest>(static_cast<TVoid>(src));
 }
 
