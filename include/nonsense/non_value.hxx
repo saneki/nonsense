@@ -9,18 +9,16 @@ namespace nonsense {
 template <typename T, T Exempt>
 class non_value {
 public:
+	using value_type = T;
+	using reference = T&;
+	using const_reference = const T&;
 	constexpr non_value() = default;
 
 	constexpr non_value(T value)
 		: _value(value) {}
 
-	// Return the underlying value, regardless of whether or not it contains the exempt value.
-	constexpr T operator*() const noexcept {
-		return _value;
-	}
-
 	// Return the underlying value or throw an exception if it contains the exempt value.
-	constexpr T get() const {
+	constexpr value_type get() const {
 		if (has_value())
 			return _value;
 		else
@@ -30,6 +28,16 @@ public:
 	// Whether or not the contained value is distinct from the exempt value.
 	constexpr bool has_value() const noexcept {
 		return _value != Exempt;
+	}
+
+	// Return a reference to the underlying value.
+	constexpr reference raw() noexcept {
+		return _value;
+	}
+
+	// Return a const reference to the underlying value.
+	constexpr const_reference raw() const noexcept {
+		return _value;
 	}
 private:
 	T _value = Exempt;
