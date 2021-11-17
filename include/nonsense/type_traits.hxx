@@ -63,4 +63,23 @@ struct is_bits_count {
 template <typename T, std::size_t Bits>
 static constexpr inline bool is_bits_count_v = is_bits_count<T, Bits>::value;
 
+// Remove reference and cv-qualifiers of given type.
+template <typename T>
+struct remove_ref_and_cv {
+	using type = std::remove_cv_t<std::remove_reference_t<T>>;
+};
+
+template <typename T>
+using remove_ref_and_cv_t = remove_ref_and_cv<T>::type;
+
+// Check if T lvalue-reference equality is noexcept.
+template <typename T>
+struct is_nothrow_equality {
+	using element = remove_ref_and_cv_t<T>;
+	static constexpr inline bool value = noexcept(std::declval<const element&>() == std::declval<const element&>());
+};
+
+template <typename T>
+static constexpr inline bool is_nothrow_equality_v = is_nothrow_equality<T>::value;
+
 } // namespace nonsense

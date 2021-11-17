@@ -3,6 +3,7 @@
 #include <cstring>
 #include <memory>
 #include <type_traits>
+#include <nonsense/type_traits.hxx>
 
 namespace nonsense {
 
@@ -32,6 +33,22 @@ public:
 		Alloc(allocator),
 		_begin(allocate(length)),
 		_length(length) {}
+
+	constexpr mem_array(const mem_array<T, Alloc> &other) :
+		Alloc(std::allocator_traits<Alloc>::select_on_container_copy_construction(static_cast<allocator_type>(other))),
+		_begin(allocate(other.length())),
+		_length(other.length())
+	{
+		std::copy(other.begin(), other.end(), _begin);
+	}
+
+	constexpr mem_array(const mem_array<T, Alloc> &other, const allocator_type &allocator) :
+		Alloc(allocator),
+		_begin(allocate(other.length())),
+		_length(other.length())
+	{
+		std::copy(other.begin(), other.end(), _begin);
+	}
 
 	constexpr mem_array(mem_array<T, Alloc>&& other) :
 		Alloc(std::move(other)),
@@ -169,5 +186,17 @@ private:
 	pointer _begin;
 	size_type _length;
 };
+
+// Compare two mem_array instances for equality.
+template <typename T, typename Alloc>
+constexpr bool operator==(const mem_array<T, Alloc> &lhs, const mem_array<T, Alloc> &rhs) noexcept(is_nothrow_equality_v<T>) {
+	return lhs.length() == rhs.length() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+// Compare two mem_array instances for inequality.
+template <typename T, typename Alloc>
+constexpr bool operator!=(const mem_array<T, Alloc> &lhs, const mem_array<T, Alloc> &rhs) noexcept(is_nothrow_equality_v<T>) {
+	return !(lhs == rhs);
+}
 
 } // namespace nonsense

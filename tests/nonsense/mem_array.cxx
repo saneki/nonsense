@@ -43,6 +43,13 @@ TEST(mem_array, Constructor_InitializerList) {
 	EXPECT_EQ(array[1], 0x37);
 }
 
+TEST(mem_array, CopyConstructor) {
+	ns::mem_array<u8> source(0x100);
+	std::iota(source.begin(), source.end(), 0);
+	const ns::mem_array<u8> copied(source);
+	ASSERT_EQ(source, copied);
+}
+
 TEST(mem_array, CopyInto_Bytes) {
 	const ns::iota_array<u8, 0x1000> buffer;
 	const auto array = ns::mem_array<u8>::copy_into(buffer.array(), buffer.length());
