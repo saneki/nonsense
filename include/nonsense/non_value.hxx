@@ -6,7 +6,8 @@
 
 namespace nonsense {
 
-template <typename T, T Exempt>
+template <typename T, T Exempt,
+          std::enable_if_t<std::is_trivial_v<T>, bool> = true>
 class non_value {
 public:
 	using value_type = T;
