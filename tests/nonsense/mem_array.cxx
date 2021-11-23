@@ -43,11 +43,32 @@ TEST(mem_array, Constructor_InitializerList) {
 	EXPECT_EQ(array[1], 0x37);
 }
 
+TEST(mem_array, CopyAssignment) {
+	ns::mem_array<u8> source(0x100);
+	std::iota(source.begin(), source.end(), 0);
+	ns::mem_array<u8> array(10);
+	array = source;
+	EXPECT_EQ(array, source);
+	EXPECT_NE(array.begin(), source.begin());
+}
+
 TEST(mem_array, CopyConstructor) {
 	ns::mem_array<u8> source(0x100);
 	std::iota(source.begin(), source.end(), 0);
 	const ns::mem_array<u8> copied(source);
 	ASSERT_EQ(source, copied);
+}
+
+TEST(mem_array, MoveAssignment) {
+	ns::mem_array<u8> source(0x100);
+	const auto pointer = source.begin();
+	const auto length = source.length();
+	ns::mem_array<u8> array(10);
+	array = std::move(source);
+	EXPECT_EQ(array.begin(), pointer);
+	EXPECT_EQ(array.length(), length);
+	EXPECT_EQ(source.begin(), nullptr);
+	EXPECT_EQ(source.length(), 0);
 }
 
 TEST(mem_array, CopyInto_Bytes) {

@@ -50,6 +50,19 @@ public:
 		std::copy(other.begin(), other.end(), _begin);
 	}
 
+	constexpr mem_array& operator=(const mem_array<T, Alloc> &other) {
+		if (_length != other._length) {
+			deallocate();
+			Alloc::operator=(other);
+			_begin = allocate(other._length);
+			_length = other._length;
+		} else {
+			Alloc::operator=(other);
+		}
+		std::copy(other.begin(), other.end(), _begin);
+		return *this;
+	}
+
 	constexpr mem_array(mem_array<T, Alloc>&& other) :
 		Alloc(std::move(other)),
 		_begin(other._begin),
@@ -66,6 +79,16 @@ public:
 	{
 		other._begin = nullptr;
 		other._length = 0;
+	}
+
+	constexpr mem_array& operator=(mem_array<T, Alloc> &&other) {
+		deallocate();
+		Alloc::operator=(std::move(other));
+		_begin = other._begin;
+		_length = other._length;
+		other._begin = nullptr;
+		other._length = 0;
+		return *this;
 	}
 
 	constexpr mem_array(std::initializer_list<T> initlist, const allocator_type& allocator = Alloc()) :
