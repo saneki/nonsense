@@ -1,15 +1,15 @@
-C++      := clang++
-C++FLAGS := -std=c++2a
+all: release
 
-all: build-main
+debug:
+	cmake -S . -B build/Debug -D CMAKE_BUILD_TYPE=Debug
+	cmake --build build/Debug
 
-build-main: build-directory build/main
+release:
+	cmake -S . -B build/Release -D CMAKE_BUILD_TYPE=Release
+	cmake --build build/Release
 
-build-directory:
-	mkdir -p build
+test: release
+	./build/Release/tests/nonsense/nonsense_tests
 
 clean:
-	rm -f build/main
-
-build/main: main.cxx
-	$(C++) -o "$@" $< $(C++FLAGS)
+	rm -rf build
