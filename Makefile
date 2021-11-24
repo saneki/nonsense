@@ -9,7 +9,7 @@ release:
 	cmake --build build/Release
 
 test: release
-	./build/Release/tests/nonsense/nonsense_tests
+	./build/Release/test/nonsense_tests
 
 clean:
 	rm -rf build
