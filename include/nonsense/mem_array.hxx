@@ -24,6 +24,13 @@ public:
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+	// Whether or not the swap implementation for this type is noexcept.
+	// Swapping std::size_t or pointers should always be noexcept, so we check the allocator.
+	// Check if Alloc does not propagate on swap, or if it is noexcept-swappable.
+	static constexpr const bool is_nothrow_swappable =
+		std::is_same_v<typename std::allocator_traits<Alloc>::propagate_on_container_swap, std::false_type> ||
+		std::is_nothrow_swappable_v<Alloc>;
+
 	constexpr explicit mem_array(const allocator_type &allocator = Alloc()) noexcept :
 		Alloc(allocator),
 		_begin(nullptr),
@@ -187,6 +194,21 @@ public:
 		return rend();
 	}
 
+	constexpr void swap(mem_array<T, Alloc> &other) noexcept(is_nothrow_swappable) {
+		swap(other, typename std::allocator_traits<Alloc>::propagate_on_container_swap());
+	}
+
+	constexpr void swap(mem_array<T, Alloc> &other, std::true_type) noexcept(std::is_nothrow_swappable_v<Alloc>) {
+		std::swap(_begin, other._begin);
+		std::swap(_length, other._length);
+		std::swap(static_cast<Alloc&>(*this), static_cast<Alloc&>(other));
+	}
+
+	constexpr void swap(mem_array<T, Alloc> &other, std::false_type) noexcept {
+		std::swap(_begin, other._begin);
+		std::swap(_length, other._length);
+	}
+
 	/**
 	 * Copy existing data into a created mem_array via std::copy, and return it.
 	 **/
@@ -220,6 +242,12 @@ constexpr bool operator==(const mem_array<T, Alloc> &lhs, const mem_array<T, All
 template <typename T, typename Alloc>
 constexpr bool operator!=(const mem_array<T, Alloc> &lhs, const mem_array<T, Alloc> &rhs) noexcept(is_nothrow_equality_v<T>) {
 	return !(lhs == rhs);
+}
+
+// Swap the contents of two mem_array instances.
+template <typename T, typename Alloc>
+constexpr void swap(mem_array<T, Alloc> &x, mem_array<T, Alloc> &y) noexcept(mem_array<T, Alloc>::is_nothrow_swappable) {
+	x.swap(y);
 }
 
 } // namespace nonsense

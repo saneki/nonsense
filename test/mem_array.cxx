@@ -87,3 +87,15 @@ TEST(mem_array, MemCpyInto_Bytes) {
 	for (usize i = 0; i < array.length(); i++)
 		EXPECT_EQ(array[i], buffer[i]) << "Index: " << i;
 }
+
+TEST(mem_array, Swap_DefaultAllocator) {
+	ns::mem_array<u8> x(24);
+	ns::mem_array<u8> y(100);
+	const auto x_pointer = x.begin();
+	const auto y_pointer = y.begin();
+	ns::swap(x, y);
+	EXPECT_EQ(x.length(), 100);
+	EXPECT_EQ(y.length(), 24);
+	EXPECT_EQ(x.begin(), y_pointer);
+	EXPECT_EQ(y.begin(), x_pointer);
+}
