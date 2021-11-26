@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 project(nonsense_tests)
 
 set(source_files
+	algorithm.cxx
 	iota_array.cxx
 	mem_array.cxx
 	non_value.cxx

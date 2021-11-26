@@ -5,6 +5,7 @@ project(NONSENSE)
 # List header files in variable.
 set(nonsense_include_dir "${CMAKE_CURRENT_SOURCE_DIR}/include/nonsense")
 set(header_files
+	"${nonsense_include_dir}/algorithm.hxx"
 	"${nonsense_include_dir}/iota_array.hxx"
 	"${nonsense_include_dir}/iota.hxx"
 	"${nonsense_include_dir}/mem_array.hxx"
