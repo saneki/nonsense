@@ -14,6 +14,12 @@ public:
 	using array_reference = array_type&;
 	using const_array_reference = const array_type&;
 
+	// Justification: Container copy-assignment will copy the data anyways...
+	using propagate_on_container_copy_assignment =
+		std::allocator_traits<Alloc>::propagate_on_container_copy_assignment;
+	using propagate_on_container_move_assignment = std::true_type;
+	using propagate_on_container_swap = std::true_type;
+
 	static constexpr const std::size_t buffer_size = BufferSize;
 
 	[[nodiscard]] constexpr T* allocate(size_type n) {
